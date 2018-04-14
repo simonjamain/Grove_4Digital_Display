@@ -118,11 +118,33 @@ void TM1637::display(int8_t DispData[])
   writeByte(Cmd_DispCtrl);//
   stop();           //
 }
+void TM1637::displayRaw(int8_t SegData[])
+{
+  uint8_t i;
+  start();          //start signal sent to TM1637 from MCU
+  writeByte(ADDR_AUTO);//
+  stop();           //
+  start();          //
+  writeByte(Cmd_SetAddr);//
+  for(i=0;i < 4;i ++)
+  {
+    writeByte(SegData[i]);        //
+  }
+  stop();           //
+  start();          //
+  writeByte(Cmd_DispCtrl);//
+  stop();           //
+}
 //******************************************
 void TM1637::display(uint8_t BitAddr,int8_t DispData)
 {
   int8_t SegData;
   SegData = coding(DispData);
+  displayRaw(BitAddr,SegData);        //
+}
+
+void TM1637::displayRaw(uint8_t BitAddr,int8_t SegData)
+{
   start();          //start signal sent to TM1637 from MCU
   writeByte(ADDR_FIXED);//
   stop();           //

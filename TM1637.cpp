@@ -29,6 +29,36 @@
  * THE SOFTWARE.
  */
 
+// example values for "raw" segments methods
+/*
+A: B01110111
+B: B01111100
+C: B00111001
+D: B01011110
+E: B01111001
+F: B01110001
+G: B01101111
+H: B01110110
+I: B00110000
+J: B00011110
+K: B01110110
+L: B00111000
+M: B00010101
+N: B01010100
+O: B00111111
+P: B01110011
+Q: B01100111
+R: B01010000
+S: B01101101
+T: B01111000
+U: B00111110
+V: B00011100
+W: B00101010
+X: B01110110
+Y: B01101110
+Z: B01011011
+*/
+
 #include "TM1637.h"
 #include <Arduino.h>
 static int8_t TubeTab[] = {0x3f,0x06,0x5b,0x4f,
@@ -118,6 +148,7 @@ void TM1637::display(int8_t DispData[])
   writeByte(Cmd_DispCtrl);//
   stop();           //
 }
+
 void TM1637::displayRaw(int8_t SegData[])
 {
   uint8_t i;
@@ -156,6 +187,31 @@ void TM1637::displayRaw(uint8_t BitAddr,int8_t SegData)
   writeByte(Cmd_DispCtrl);//
   stop();           //
 }
+
+void TM1637::displayDecimal(float NumberToDisplay,uint8_t NumberOfDecimals)
+{
+  char NumberString[5];
+  char OutputRaw[4];
+  dtostrf(NumberToDisplay, 5, NumberOfDecimals, NumberString);
+  uint8_t i;
+  uint8_t shift = 0;
+  for(i=0;i<5;++i)
+  {
+    if(NumberString[i] == '.')
+    {
+      OutputRaw[i-1] += B10000000;
+      shift = 1;
+    }else if(NumberString[i] == ' ')
+    {
+      OutputRaw[i-shift] = B00000000;
+    }else
+    {
+      OutputRaw[i-shift] = TubeTab[NumberString[i] - '0'];
+    }
+  }
+  displayRaw(OutputRaw);
+}
+
 
 void TM1637::clearDisplay(void)
 {

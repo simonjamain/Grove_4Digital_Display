@@ -67,6 +67,7 @@ class TM1637
     void point(boolean PointFlag);//whether to light the clock point ":".To take effect the next time it displays.
     void coding(int8_t DispData[]);
     int8_t coding(int8_t DispData);
+    void displayDecimal(float NumberToDisplay,uint8_t NumberOfDecimals);//display a floating value (for displays with dots)
     void bitDelay(void);
   private:
     uint8_t Clkpin;
